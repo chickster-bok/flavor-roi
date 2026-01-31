@@ -61,11 +61,18 @@ export default function Home() {
             </div>
             <span className="font-bold text-lg">The $5 Chef</span>
           </div>
-          <Link href="/login">
-            <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10">
-              Sign In
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/pricing">
+              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white hover:bg-white/10">
+                Pricing
+              </Button>
+            </Link>
+            <Link href="/login">
+              <Button size="sm" className="bg-white text-black hover:bg-white/90 font-medium">
+                Sign In
+              </Button>
+            </Link>
+          </div>
         </header>
 
         {/* Hero */}
@@ -93,15 +100,15 @@ export default function Home() {
           <Link href="/login">
             <Button
               size="lg"
-              className="h-14 px-8 text-lg bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold rounded-full shadow-lg shadow-emerald-500/30"
+              className="h-14 px-8 text-lg bg-white text-black hover:bg-white/90 font-semibold rounded-full shadow-lg"
             >
-              Get Started Free
+              Start Free Trial
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
 
-          <p className="text-sm text-white/40 mt-4">
-            No credit card required
+          <p className="text-sm text-white/50 mt-4">
+            7 days free, then $4.99/month
           </p>
         </div>
 

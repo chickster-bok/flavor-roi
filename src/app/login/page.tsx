@@ -101,10 +101,10 @@ export default function LoginPage() {
       <div className="relative z-10 min-h-screen flex flex-col max-w-md mx-auto px-6 py-8">
         {/* Back Button */}
         <Link href="/">
-          <Button variant="ghost" size="sm" className="text-white/60 hover:text-white hover:bg-white/10 -ml-2 mb-8">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+          <button className="flex items-center gap-2 text-white/60 hover:text-white text-sm -ml-2 mb-8 py-2 px-3 rounded-lg hover:bg-white/10 transition-colors">
+            <ArrowLeft className="w-4 h-4" />
             Back
-          </Button>
+          </button>
         </Link>
 
         {/* Header */}

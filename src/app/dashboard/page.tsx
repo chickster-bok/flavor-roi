@@ -36,6 +36,7 @@ import { recipeDatabase } from '@/lib/recipeDatabase';
 import { logOut } from '@/lib/firebase';
 import { CameraDialog } from '@/components/CameraDialog';
 import { ManualInput } from '@/components/ManualInput';
+import { useTrial } from '@/hooks/useTrial';
 
 type ViewMode = 'dashboard' | 'results' | 'manual-input';
 
@@ -46,6 +47,7 @@ function DashboardContent() {
   const { items: pantryItems } = usePantry();
   const { recipes: cookbookRecipes, hasRecipe } = useCookbook();
   const { profile, addRecentlyViewed } = useProfile();
+  const { isTrialActive, isPremium, daysRemaining, hasTrialExpired } = useTrial();
 
   const [viewMode, setViewMode] = useState<ViewMode>('dashboard');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -187,14 +189,12 @@ function DashboardContent() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-background to-muted/30 p-4 pt-6 pb-20">
         <header className="text-center mb-6">
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={() => setViewMode('dashboard')}
-            className="mb-2"
+            className="mb-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
           >
             ← Back to Dashboard
-          </Button>
+          </button>
           <h1 className="text-xl font-bold text-foreground flex items-center justify-center gap-2">
             <ChefHat className="w-6 h-6 text-emerald-600" />
             Recipe Results
@@ -224,14 +224,13 @@ function DashboardContent() {
         </header>
         <ManualInput onSubmit={handleAnalyzeIngredients} isAnalyzing={isAnalyzing} />
         <div className="mt-4 text-center">
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={() => setViewMode('dashboard')}
             disabled={isAnalyzing}
+            className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors disabled:opacity-50"
           >
             Back to Dashboard
-          </Button>
+          </button>
         </div>
       </main>
     );
@@ -253,51 +252,99 @@ function DashboardContent() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {isSubscribed && (
+            {isSubscribed ? (
               <Badge className="bg-gradient-to-r from-emerald-500 to-amber-500 text-white">
                 <Crown className="w-3 h-3 mr-1" />
-                Chef
+                Premium
               </Badge>
-            )}
+            ) : isTrialActive ? (
+              <Badge className="bg-emerald-500 text-white">
+                Trial
+              </Badge>
+            ) : null}
             {user && (
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut className="w-4 h-4" />
-              </Button>
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <LogOut className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+              </button>
             )}
           </div>
         </div>
       </header>
 
       <div className="p-4 max-w-4xl mx-auto space-y-6">
+        {/* Trial/Upgrade Banner */}
+        {isTrialActive && !isSubscribed && (
+          <div className="bg-gradient-to-r from-emerald-500 to-amber-500 rounded-xl p-4 text-white">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <Crown className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="font-semibold">Free Trial Active</p>
+                  <p className="text-sm text-white/80">{daysRemaining} days remaining</p>
+                </div>
+              </div>
+              <Link href="/pricing">
+                <Button size="sm" className="bg-white text-emerald-600 hover:bg-white/90 font-semibold">
+                  See Plans
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {hasTrialExpired && !isSubscribed && (
+          <div className="bg-gradient-to-r from-amber-500 to-red-500 rounded-xl p-4 text-white">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <Crown className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="font-semibold">Trial Ended</p>
+                  <p className="text-sm text-white/80">Upgrade to continue using all features</p>
+                </div>
+              </div>
+              <Link href="/subscribe">
+                <Button size="sm" className="bg-white text-amber-600 hover:bg-white/90 font-semibold">
+                  Upgrade Now
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Quick Navigation */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
           <Link href="/browse">
-            <Button variant="outline" size="sm" className="flex-shrink-0 border-emerald-300 text-emerald-600 hover:bg-emerald-50">
-              <ChefHat className="w-4 h-4 mr-2" />
+            <button className="flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-lg text-sm font-medium flex-shrink-0 hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors">
+              <ChefHat className="w-4 h-4" />
               Browse All
-            </Button>
+            </button>
           </Link>
           <Link href="/profile">
-            <Button variant="outline" size="sm" className="flex-shrink-0">
-              <User className="w-4 h-4 mr-2" />
+            <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium flex-shrink-0 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              <User className="w-4 h-4" />
               Profile
-            </Button>
+            </button>
           </Link>
           <Link href="/shopping-list">
-            <Button variant="outline" size="sm" className="flex-shrink-0">
-              <ShoppingCart className="w-4 h-4 mr-2" />
+            <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium flex-shrink-0 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              <ShoppingCart className="w-4 h-4" />
               Shopping List
-            </Button>
+            </button>
           </Link>
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-shrink-0 border-pink-300 text-pink-600 hover:bg-pink-50"
+          <button
             onClick={handleSurpriseMe}
+            className="flex items-center gap-2 px-4 py-2 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-lg text-sm font-medium flex-shrink-0 hover:bg-pink-200 dark:hover:bg-pink-900/50 transition-colors"
           >
-            <Shuffle className="w-4 h-4 mr-2" />
+            <Shuffle className="w-4 h-4" />
             Surprise Me!
-          </Button>
+          </button>
         </div>
 
         {/* Quick Stats */}
@@ -353,14 +400,13 @@ function DashboardContent() {
                 <Camera className="w-6 h-6" />
                 <span>Scan Ingredients</span>
               </Button>
-              <Button
+              <button
                 onClick={() => setViewMode('manual-input')}
-                variant="outline"
-                className="h-20 flex-col gap-2"
+                className="h-20 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors text-gray-700 dark:text-gray-300"
               >
                 <Keyboard className="w-6 h-6" />
-                <span>Type Ingredients</span>
-              </Button>
+                <span className="font-medium">Type Ingredients</span>
+              </button>
             </div>
             {pantryItems.length > 0 && (
               <Button
