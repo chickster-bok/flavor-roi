@@ -1,65 +1,157 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePantry } from '@/contexts/PantryContext';
+import { useCookbook } from '@/contexts/CookbookContext';
+import { Button } from '@/components/ui/button';
+import {
+  ChefHat,
+  Camera,
+  Sparkles,
+  TrendingUp,
+  DollarSign,
+  LogIn,
+  Loader2,
+  ArrowRight,
+  Check,
+} from 'lucide-react';
 
 export default function Home() {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+  const { items: pantryItems, loading: pantryLoading } = usePantry();
+  const { recipes: cookbookRecipes } = useCookbook();
+
+  // If user is already set up, redirect to dashboard
+  useEffect(() => {
+    if (!authLoading && !pantryLoading) {
+      if (pantryItems.length > 0 || cookbookRecipes.length > 0) {
+        router.push('/dashboard');
+      }
+    }
+  }, [authLoading, pantryLoading, pantryItems, cookbookRecipes, router]);
+
+  if (authLoading || pantryLoading) {
+    return (
+      <main className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+      </main>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex flex-col">
+      {/* Header */}
+      <header className="p-4 flex items-center justify-between">
+        <div className="w-20" />
+        {user ? (
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm">
+              Dashboard
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </Link>
+        ) : (
+          <Link href="/login">
+            <Button variant="ghost" size="sm">
+              <LogIn className="w-4 h-4 mr-1" />
+              Login
+            </Button>
+          </Link>
+        )}
+      </header>
+
+      {/* Hero Section */}
+      <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        {/* Logo */}
+        <div className="mb-8">
+          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-500/30 mb-6 mx-auto">
+            <ChefHat className="w-12 h-12 text-white" />
+          </div>
+          <h1 className="text-4xl font-bold text-foreground tracking-tight">
+            The $5 Chef
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-lg text-muted-foreground mt-3">
+            Maximum Flavor. Minimum Cost.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Value Props */}
+        <div className="grid grid-cols-3 gap-6 mb-10 w-full max-w-md">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+              <Camera className="w-7 h-7 text-emerald-600" />
+            </div>
+            <span className="text-sm font-medium">Scan</span>
+            <span className="text-xs text-muted-foreground">Your ingredients</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-14 h-14 rounded-2xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+              <Sparkles className="w-7 h-7 text-amber-600" />
+            </div>
+            <span className="text-sm font-medium">Match</span>
+            <span className="text-xs text-muted-foreground">AI-powered recipes</span>
+          </div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <TrendingUp className="w-7 h-7 text-blue-600" />
+            </div>
+            <span className="text-sm font-medium">Cook</span>
+            <span className="text-xs text-muted-foreground">Delicious meals</span>
+          </div>
         </div>
-      </main>
-    </div>
+
+        {/* Features */}
+        <div className="w-full max-w-sm mb-8 space-y-3">
+          <div className="flex items-center gap-3 text-left">
+            <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+            <span className="text-sm">AI-powered ingredient scanning</span>
+          </div>
+          <div className="flex items-center gap-3 text-left">
+            <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+            <span className="text-sm">50+ delicious recipes with full instructions</span>
+          </div>
+          <div className="flex items-center gap-3 text-left">
+            <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+            <span className="text-sm">Smart pantry management</span>
+          </div>
+          <div className="flex items-center gap-3 text-left">
+            <Check className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+            <span className="text-sm">Ask AI for cooking tips and substitutions</span>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="w-full max-w-xs space-y-3">
+          <Link href="/dashboard">
+            <Button
+              className="w-full h-14 text-lg bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold shadow-lg shadow-emerald-500/30"
+              size="lg"
+            >
+              Get Started
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </Link>
+          {!user && (
+            <p className="text-xs text-muted-foreground">
+              No account needed to try it out
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="p-6 text-center">
+        <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+          <DollarSign className="w-4 h-4" />
+          <span className="font-medium">The $5 Chef</span>
+          <span className="mx-2">•</span>
+          <span>Powered by AI</span>
+        </div>
+      </footer>
+    </main>
   );
 }
