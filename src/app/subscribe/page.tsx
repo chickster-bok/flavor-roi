@@ -105,7 +105,7 @@ export default function SubscribePage() {
           <Badge className="bg-white/20 text-white border-0 mb-2">
             Michelin Star
           </Badge>
-          <h1 className="text-2xl font-bold">The $5 Chef</h1>
+          <h1 className="text-2xl font-bold">Gap Chef</h1>
           <p className="text-white/80 text-sm">Unlock your kitchen's potential</p>
         </div>
 

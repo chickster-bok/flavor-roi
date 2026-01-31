@@ -18,13 +18,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The $5 Chef | FlavorROI",
-  description: "Scan your ingredients. Get maximum flavor for minimum cost.",
-  keywords: ["cooking", "recipes", "ingredients", "meal planning", "budget cooking"],
-  authors: [{ name: "FlavorROI" }],
+  title: "Gap Chef",
+  description: "Enter your ingredients. Get delicious recipes.",
+  keywords: ["cooking", "recipes", "ingredients", "meal planning"],
+  authors: [{ name: "Gap Chef" }],
   openGraph: {
-    title: "The $5 Chef | FlavorROI",
-    description: "Scan your ingredients. Get maximum flavor for minimum cost.",
+    title: "Gap Chef",
+    description: "Enter your ingredients. Get delicious recipes.",
     type: "website",
   },
 };

@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     status: 'ok',
-    message: 'FlavorROI Analysis API',
+    message: 'Gap Chef Analysis API',
     hasGeminiKey: !!GEMINI_API_KEY,
     recipeCount: recipeDatabase.length,
   });

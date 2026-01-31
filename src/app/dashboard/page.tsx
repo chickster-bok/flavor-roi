@@ -224,7 +224,7 @@ function DashboardContent() {
               <ChefHat className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-lg">The $5 Chef</h1>
+              <h1 className="font-bold text-lg">Gap Chef</h1>
               <p className="text-xs text-muted-foreground">Dashboard</p>
             </div>
           </div>
@@ -521,7 +521,7 @@ function DashboardContent() {
           <Card className="bg-gradient-to-br from-emerald-50 to-amber-50 dark:from-emerald-950/30 dark:to-amber-950/30 border-0">
             <CardContent className="p-6 text-center">
               <ChefHat className="w-12 h-12 mx-auto mb-3 text-emerald-600" />
-              <h2 className="text-lg font-semibold mb-2">Welcome to The $5 Chef!</h2>
+              <h2 className="text-lg font-semibold mb-2">Welcome to Gap Chef!</h2>
               <p className="text-sm text-muted-foreground mb-4">
                 Get started by setting up your pantry or scanning some ingredients.
               </p>

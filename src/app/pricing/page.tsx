@@ -59,7 +59,7 @@ export default function PricingPage() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
               <ChefHat className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold">The $5 Chef</span>
+            <span className="font-bold">Gap Chef</span>
           </div>
         </div>
 
