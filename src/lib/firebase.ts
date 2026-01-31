@@ -28,8 +28,18 @@ function getFirebaseApp() {
   if (typeof window === 'undefined') {
     return null;
   }
+  // Don't initialize if API key is missing
+  if (!firebaseConfig.apiKey) {
+    console.warn('Firebase API key not configured');
+    return null;
+  }
   if (!app) {
-    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    try {
+      app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+    } catch (error) {
+      console.error('Failed to initialize Firebase:', error);
+      return null;
+    }
   }
   return app;
 }

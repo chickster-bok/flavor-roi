@@ -50,6 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
     const auth = getFirebaseAuth();
     if (!auth) {
       setLoading(false);
