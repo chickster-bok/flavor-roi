@@ -5,6 +5,7 @@ import { PantryProvider } from "@/contexts/PantryContext";
 import { CookbookProvider } from "@/contexts/CookbookContext";
 import { ProfileProvider } from "@/contexts/ProfileContext";
 import { ReviewsProvider } from "@/contexts/ReviewsContext";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -57,6 +58,7 @@ export default function RootLayout({
                 <ReviewsProvider>
                   {children}
                 </ReviewsProvider>
+                <Analytics />
               </ProfileProvider>
             </CookbookProvider>
           </PantryProvider>
