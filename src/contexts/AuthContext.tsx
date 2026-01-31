@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { auth, onAuthStateChanged, User } from '@/lib/firebase';
+import { getFirebaseAuth, onAuthStateChanged, User } from '@/lib/firebase';
 
 interface Subscription {
   status: 'active' | 'inactive' | 'past_due' | 'canceled';
@@ -50,6 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    const auth = getFirebaseAuth();
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
