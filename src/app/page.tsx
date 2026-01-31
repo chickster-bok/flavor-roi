@@ -7,13 +7,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import {
   ChefHat,
-  Camera,
   Sparkles,
   ArrowRight,
   Utensils,
   Leaf,
   Clock,
   Star,
+  Search,
 } from 'lucide-react';
 
 export default function Home() {
@@ -93,7 +93,7 @@ export default function Home() {
           </h1>
 
           <p className="text-xl text-white/60 max-w-xl mb-10">
-            Scan your ingredients, get personalized recipes, and create delicious meals with what you already have.
+            Enter your ingredients, get personalized recipes, and create delicious meals with what you already have.
           </p>
 
           {/* CTA */}
@@ -117,10 +117,10 @@ export default function Home() {
           <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
               <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-3">
-                <Camera className="w-6 h-6 text-emerald-400" />
+                <Search className="w-6 h-6 text-emerald-400" />
               </div>
-              <h3 className="font-semibold mb-1">Scan Ingredients</h3>
-              <p className="text-sm text-white/50">Point your camera at any ingredient</p>
+              <h3 className="font-semibold mb-1">Find Recipes</h3>
+              <p className="text-sm text-white/50">Enter your ingredients, get matches</p>
             </div>
 
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 border border-white/10">

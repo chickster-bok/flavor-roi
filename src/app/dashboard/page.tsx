@@ -13,7 +13,6 @@ import { RecipeList } from '@/components/RecipeList';
 import { AnalysisResult, FullRecipeResult } from '@/lib/types';
 import {
   ChefHat,
-  Camera,
   Keyboard,
   Package,
   BookOpen,
@@ -30,11 +29,11 @@ import {
   ShoppingCart,
   Shuffle,
   Star,
+  Search,
 } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import { recipeDatabase } from '@/lib/recipeDatabase';
 import { logOut } from '@/lib/firebase';
-import { CameraDialog } from '@/components/CameraDialog';
 import { ManualInput } from '@/components/ManualInput';
 import { useTrial } from '@/hooks/useTrial';
 
@@ -52,7 +51,6 @@ function DashboardContent() {
   const [viewMode, setViewMode] = useState<ViewMode>('dashboard');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [showCamera, setShowCamera] = useState(false);
   const [makeNowRecipes, setMakeNowRecipes] = useState<FullRecipeResult[]>([]);
   const [loadingMakeNow, setLoadingMakeNow] = useState(false);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
@@ -127,27 +125,6 @@ function DashboardContent() {
         const data = (await response.json()) as AnalysisResult;
         setResult(data);
         setViewMode('results');
-      }
-    } catch (error) {
-      console.error('Analysis failed:', error);
-    }
-    setIsAnalyzing(false);
-  };
-
-  const handleAnalyzeImage = async (imageData: string) => {
-    setIsAnalyzing(true);
-    try {
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageData, maxRecipes: 50 }),
-      });
-
-      if (response.ok) {
-        const data = (await response.json()) as AnalysisResult;
-        setResult(data);
-        setViewMode('results');
-        setShowCamera(false);
       }
     } catch (error) {
       console.error('Analysis failed:', error);
@@ -392,22 +369,13 @@ function DashboardContent() {
               <Sparkles className="w-4 h-4 text-emerald-600" />
               Find Recipes
             </h2>
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                onClick={() => setShowCamera(true)}
-                className="h-20 flex-col gap-2 bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
-              >
-                <Camera className="w-6 h-6" />
-                <span>Scan Ingredients</span>
-              </Button>
-              <button
-                onClick={() => setViewMode('manual-input')}
-                className="h-20 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors text-gray-700 dark:text-gray-300"
-              >
-                <Keyboard className="w-6 h-6" />
-                <span className="font-medium">Type Ingredients</span>
-              </button>
-            </div>
+            <Button
+              onClick={() => setViewMode('manual-input')}
+              className="w-full h-16 gap-3 bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
+            >
+              <Search className="w-5 h-5" />
+              <span className="font-medium">Enter Your Ingredients</span>
+            </Button>
             {pantryItems.length > 0 && (
               <Button
                 onClick={handleAnalyzeFromPantry}
@@ -559,15 +527,18 @@ function DashboardContent() {
               </p>
               <div className="flex gap-3 justify-center">
                 <Link href="/pantry">
-                  <Button variant="outline">
-                    <Package className="w-4 h-4 mr-2" />
+                  <button className="px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg flex items-center gap-2 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+                    <Package className="w-4 h-4" />
                     Set Up Pantry
-                  </Button>
+                  </button>
                 </Link>
-                <Button onClick={() => setShowCamera(true)} className="bg-emerald-500 hover:bg-emerald-600">
-                  <Camera className="w-4 h-4 mr-2" />
-                  Scan Now
-                </Button>
+                <button
+                  onClick={() => setViewMode('manual-input')}
+                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg flex items-center gap-2 transition-colors"
+                >
+                  <Search className="w-4 h-4" />
+                  Find Recipes
+                </button>
               </div>
             </CardContent>
           </Card>
@@ -591,13 +562,6 @@ function DashboardContent() {
         </Card>
       </div>
 
-      {/* Camera Dialog */}
-      <CameraDialog
-        open={showCamera}
-        onOpenChange={setShowCamera}
-        onCapture={handleAnalyzeImage}
-        isAnalyzing={isAnalyzing}
-      />
     </main>
   );
 }

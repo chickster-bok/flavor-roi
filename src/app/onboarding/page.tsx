@@ -7,15 +7,13 @@ import { Input } from '@/components/ui/input';
 import { useProfile, DIETARY_OPTIONS, ALLERGY_OPTIONS, COOKING_LEVELS, CookingLevel } from '@/contexts/ProfileContext';
 import { usePantry } from '@/contexts/PantryContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { CameraDialog } from '@/components/CameraDialog';
 import { ManualInput } from '@/components/ManualInput';
 import {
   ChefHat,
   ArrowRight,
   ArrowLeft,
   Check,
-  Camera,
-  Keyboard,
+  Plus,
   Sparkles,
   Loader2,
   X,
@@ -39,10 +37,8 @@ export default function OnboardingPage() {
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>(profile.favoriteCuisines);
   const [selectedDietary, setSelectedDietary] = useState<string[]>(profile.dietaryRestrictions);
   const [selectedAllergies, setSelectedAllergies] = useState<string[]>(profile.allergies);
-  const [showCamera, setShowCamera] = useState(false);
   const [showManualInput, setShowManualInput] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [scannedIngredients, setScannedIngredients] = useState<string[]>([]);
+  const [addedIngredients, setAddedIngredients] = useState<string[]>([]);
 
   const totalSteps = 4;
 
@@ -81,45 +77,17 @@ export default function OnboardingPage() {
       allergies: selectedAllergies,
     });
 
-    // Add scanned ingredients to pantry
-    if (scannedIngredients.length > 0) {
-      addItems(scannedIngredients);
+    // Add ingredients to pantry
+    if (addedIngredients.length > 0) {
+      addItems(addedIngredients);
     }
 
     localStorage.setItem('onboarding-complete', 'true');
     router.push('/dashboard');
   };
 
-  const handleCapture = async (imageData: string) => {
-    setIsAnalyzing(true);
-
-    try {
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageData }),
-      });
-
-      const data = await response.json();
-      if (data.found_ingredients) {
-        setScannedIngredients(prev => {
-          const newIngredients = data.found_ingredients.filter(
-            (ing: string) => !prev.some(p => p.toLowerCase() === ing.toLowerCase())
-          );
-          return [...prev, ...newIngredients];
-        });
-      }
-      setShowCamera(false);
-    } catch (error) {
-      console.error('Scan failed:', error);
-      setShowCamera(false);
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
   const handleManualAdd = (ingredients: string[]) => {
-    setScannedIngredients(prev => {
+    setAddedIngredients(prev => {
       const newIngredients = ingredients.filter(
         (ing) => !prev.some(p => p.toLowerCase() === ing.toLowerCase())
       );
@@ -129,7 +97,7 @@ export default function OnboardingPage() {
   };
 
   const removeIngredient = (ingredient: string) => {
-    setScannedIngredients(prev => prev.filter(i => i !== ingredient));
+    setAddedIngredients(prev => prev.filter(i => i !== ingredient));
   };
 
   const toggleCuisine = (cuisine: string) => {
@@ -226,7 +194,7 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* Step 2: Scan Ingredients */}
+          {/* Step 2: Add Ingredients */}
           {step === 2 && (
             <div className="space-y-6">
               <div>
@@ -234,59 +202,40 @@ export default function OnboardingPage() {
                   What's in your kitchen?
                 </h1>
                 <p className="text-white/60">
-                  Scan your fridge or pantry to get started with personalized recipes.
+                  Add some ingredients to get personalized recipe suggestions.
                 </p>
               </div>
 
-              {/* Scan Options */}
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={() => setShowCamera(true)}
-                  disabled={isAnalyzing}
-                  className="bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 rounded-2xl p-6 text-left hover:border-emerald-500/50 transition-all disabled:opacity-50"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4">
-                    <Camera className="w-6 h-6 text-emerald-400" />
+              {/* Add Ingredients Button */}
+              <button
+                onClick={() => setShowManualInput(true)}
+                className="w-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-500/30 rounded-2xl p-6 text-left hover:border-emerald-500/50 transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                    <Plus className="w-6 h-6 text-emerald-400" />
                   </div>
-                  <h3 className="font-semibold mb-1">Scan</h3>
-                  <p className="text-sm text-white/50">Use your camera</p>
-                </button>
-
-                <button
-                  onClick={() => setShowManualInput(true)}
-                  disabled={isAnalyzing}
-                  className="bg-white/5 border border-white/10 rounded-2xl p-6 text-left hover:border-white/20 transition-all disabled:opacity-50"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-4">
-                    <Keyboard className="w-6 h-6 text-white/60" />
+                  <div>
+                    <h3 className="font-semibold mb-1">Add Ingredients</h3>
+                    <p className="text-sm text-white/50">Type what you have in your kitchen</p>
                   </div>
-                  <h3 className="font-semibold mb-1">Type</h3>
-                  <p className="text-sm text-white/50">Enter manually</p>
-                </button>
-              </div>
-
-              {/* Analyzing State */}
-              {isAnalyzing && (
-                <div className="flex items-center justify-center gap-3 py-8">
-                  <Loader2 className="w-5 h-5 text-emerald-400 animate-spin" />
-                  <span className="text-white/60">Analyzing your ingredients...</span>
                 </div>
-              )}
+              </button>
 
-              {/* Scanned Ingredients */}
-              {scannedIngredients.length > 0 && (
+              {/* Added Ingredients */}
+              {addedIngredients.length > 0 && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-white/60">Your Ingredients ({scannedIngredients.length})</h3>
+                    <h3 className="text-sm font-medium text-white/60">Your Ingredients ({addedIngredients.length})</h3>
                     <button
-                      onClick={() => setScannedIngredients([])}
+                      onClick={() => setAddedIngredients([])}
                       className="text-xs text-red-400 hover:text-red-300"
                     >
                       Clear all
                     </button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {scannedIngredients.map((ingredient, i) => (
+                    {addedIngredients.map((ingredient, i) => (
                       <span
                         key={i}
                         className="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 px-3 py-1.5 rounded-full text-sm"
@@ -304,9 +253,9 @@ export default function OnboardingPage() {
                 </div>
               )}
 
-              {scannedIngredients.length === 0 && !isAnalyzing && (
+              {addedIngredients.length === 0 && (
                 <p className="text-center text-white/40 py-8">
-                  No ingredients added yet. Scan or type to add some!
+                  No ingredients added yet. Tap above to add some!
                 </p>
               )}
             </div>
@@ -470,14 +419,6 @@ export default function OnboardingPage() {
           )}
         </div>
       </div>
-
-      {/* Camera Dialog */}
-      <CameraDialog
-        open={showCamera}
-        onOpenChange={setShowCamera}
-        onCapture={handleCapture}
-        isAnalyzing={isAnalyzing}
-      />
 
       {/* Manual Input Dialog */}
       {showManualInput && (

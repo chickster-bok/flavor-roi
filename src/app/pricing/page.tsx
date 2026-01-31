@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import {
   Check,
   X,
@@ -16,25 +14,21 @@ import {
 } from 'lucide-react';
 
 export default function PricingPage() {
-  const [isYearly, setIsYearly] = useState(false);
-
   const monthlyPrice = 4.99;
-  const yearlyPrice = 39.99;
-  const yearlySavings = Math.round((1 - yearlyPrice / (monthlyPrice * 12)) * 100);
 
   const freeFeatures = [
-    { name: '5 recipe scans per day', included: true },
+    { name: '10 recipe searches per day', included: true },
     { name: 'Basic recipe suggestions', included: true },
     { name: 'Save up to 10 recipes', included: true },
     { name: 'Basic nutritional info', included: true },
-    { name: 'Unlimited scans', included: false },
+    { name: 'Unlimited searches', included: false },
     { name: 'AI meal planning', included: false },
     { name: 'Smart shopping lists', included: false },
     { name: 'Priority support', included: false },
   ];
 
   const premiumFeatures = [
-    { name: 'Unlimited recipe scans', included: true },
+    { name: 'Unlimited recipe searches', included: true },
     { name: 'Advanced AI suggestions', included: true },
     { name: 'Unlimited saved recipes', included: true },
     { name: 'Detailed nutritional analysis', included: true },
@@ -79,32 +73,6 @@ export default function PricingPage() {
           <p className="text-white/60 text-lg">Start free, upgrade when you're ready</p>
         </div>
 
-        {/* Billing Toggle */}
-        <div className="flex items-center justify-center gap-4 mb-10">
-          <span className={`text-sm font-medium ${!isYearly ? 'text-white' : 'text-white/50'}`}>
-            Monthly
-          </span>
-          <button
-            onClick={() => setIsYearly(!isYearly)}
-            className={`relative w-14 h-8 rounded-full transition-colors ${
-              isYearly ? 'bg-emerald-500' : 'bg-white/20'
-            }`}
-          >
-            <span
-              className={`absolute top-1 w-6 h-6 rounded-full bg-white transition-transform ${
-                isYearly ? 'translate-x-7' : 'translate-x-1'
-              }`}
-            />
-          </button>
-          <span className={`text-sm font-medium ${isYearly ? 'text-white' : 'text-white/50'}`}>
-            Yearly
-          </span>
-          {isYearly && (
-            <span className="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-              Save {yearlySavings}%
-            </span>
-          )}
-        </div>
 
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-2 gap-6 mb-16">
@@ -160,15 +128,8 @@ export default function PricingPage() {
             <p className="text-white/50 mb-6">For serious food enthusiasts</p>
 
             <div className="mb-8">
-              <span className="text-5xl font-bold">
-                ${isYearly ? (yearlyPrice / 12).toFixed(2) : monthlyPrice.toFixed(2)}
-              </span>
+              <span className="text-5xl font-bold">${monthlyPrice.toFixed(2)}</span>
               <span className="text-white/50">/month</span>
-              {isYearly && (
-                <p className="text-sm text-emerald-400 mt-1">
-                  Billed ${yearlyPrice}/year
-                </p>
-              )}
             </div>
 
             <ul className="space-y-4 mb-8">
